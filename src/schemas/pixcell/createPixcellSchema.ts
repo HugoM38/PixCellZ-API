@@ -1,6 +1,13 @@
-// src/schemas/pixcell/createPixcellSchema.ts
 import Joi from "joi";
 
 export const createPixcellSchema = Joi.object({
-    pixcell: Joi.array().items(Joi.number().required()).required(),
+    data: Joi.array().items(
+        Joi.array().items(
+            Joi.object({
+                r: Joi.number().integer().min(0).max(255).required(),
+                g: Joi.number().integer().min(0).max(255).required(),
+                b: Joi.number().integer().min(0).max(255).required()
+            })
+        )
+    ).required()
 });

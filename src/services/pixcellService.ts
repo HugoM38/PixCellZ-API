@@ -1,12 +1,13 @@
 import Pixcell from "../models/pixcellModel";
 
-const createPixcell = async (owner: string, pixcell: number[]) => {
-    const newPixcell = new Pixcell({ owner, pixcell });
+const createPixcell = async (userId: string, data: { r: number, g: number, b: number }[][]) => {
+    const creationDate = Date.now();
+    const newPixcell = new Pixcell({ userId, creationDate, data });
     return await newPixcell.save();
 };
 
-const getPixcellsByOwner = async (owner: string) => {
-    return Pixcell.find({owner});
+const getPixcellsByOwner = async (userId: string) => {
+    return Pixcell.find({ userId });
 };
 
 const getPixcellById = async (id: string) => {
@@ -21,8 +22,8 @@ const getAllPixcells = async () => {
     return Pixcell.find();
 };
 
-const updatePixcell = async (id: string, pixcell: number[]) => {
-    return Pixcell.findByIdAndUpdate(id, {pixcell}, {new: true});
+const updatePixcell = async (id: string, data: { r: number, g: number, b: number }[][]) => {
+    return Pixcell.findByIdAndUpdate(id, { data }, { new: true, runValidators: true });
 };
 
 export { createPixcell, getPixcellsByOwner, getPixcellById, deletePixcell, getAllPixcells, updatePixcell };

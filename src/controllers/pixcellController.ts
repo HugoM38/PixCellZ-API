@@ -1,3 +1,4 @@
+// src/controllers/pixcellController.ts
 import { Request, Response } from "express";
 import {
     createPixcell,
@@ -7,18 +8,23 @@ import {
     getAllPixcells,
     updatePixcell
 } from "../services/pixcellService";
+import mongoose from "mongoose";
+
+
 const createPixcellController = async (req: Request & { user?: string }, res: Response) => {
     try {
-        const { pixcell } = req.body;
-        const owner = req.user;
-        if (!pixcell || !Array.isArray(pixcell)) {
-            return res.status(400).json({ error: "Le champ 'pixcell' est requis et doit être un tableau de nombres." });
+        const { data } = req.body;
+        const userId = req.user;
+        if (!data || !Array.isArray(data) || !data.every(row => Array.isArray(row))) {
+            return res.status(400).json({ error: "Le champ 'data' est requis et doit être une matrice de pixels." });
         }
-        const newPixcell = await createPixcell(owner as string, pixcell);
+        const newPixcell = await createPixcell(userId as string, data);
         res.status(201).json({ pixcell: newPixcell });
     } catch (error) {
         console.error(error);
-        if (error instanceof Error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            res.status(400).json({ error: error.message });
+        } else if (error instanceof Error) {
             res.status(400).json({ error: error.message });
         } else {
             res.status(500).json({ error: "Une erreur inconnue s'est produite." });
@@ -28,8 +34,8 @@ const createPixcellController = async (req: Request & { user?: string }, res: Re
 
 const getPixcellsController = async (req: Request & { user?: string }, res: Response) => {
     try {
-        const owner = req.user;
-        const pixcells = await getPixcellsByOwner(owner as string);
+        const userId = req.user;
+        const pixcells = await getPixcellsByOwner(userId as string);
         res.status(200).json({ pixcells });
     } catch (error) {
         console.error(error);
@@ -41,7 +47,7 @@ const getPixcellsController = async (req: Request & { user?: string }, res: Resp
     }
 };
 
-const getPixcellController = async (req:Request & { user?: string }, res: Response) => {
+const getPixcellController = async (req: Request & { user?: string }, res: Response) => {
     try {
         const { id } = req.params;
         const pixcell = await getPixcellById(id);
@@ -51,7 +57,9 @@ const getPixcellController = async (req:Request & { user?: string }, res: Respon
         res.status(200).json({ pixcell });
     } catch (error) {
         console.error(error);
-        if (error instanceof Error) {
+        if (error instanceof mongoose.Error.CastError) {
+            res.status(400).json({ error: "ID de Pixcell invalide." });
+        } else if (error instanceof Error) {
             res.status(400).json({ error: error.message });
         } else {
             res.status(500).json({ error: "Une erreur inconnue s'est produite." });
@@ -66,14 +74,16 @@ const deletePixcellController = async (req: Request & { user?: string }, res: Re
         if (!pixcell) {
             return res.status(404).json({ error: "Pixcell non trouvé." });
         }
-        if (pixcell.owner !== req.user) {
+        if (pixcell.userId !== req.user) {
             return res.status(403).json({ error: "Accès refusé. Vous ne pouvez pas supprimer ce Pixcell." });
         }
         const deletedPixcell = await deletePixcell(id);
         res.status(200).json({ message: "Pixcell supprimé avec succès.", pixcell: deletedPixcell });
     } catch (error) {
         console.error(error);
-        if (error instanceof Error) {
+        if (error instanceof mongoose.Error.CastError) {
+            res.status(400).json({ error: "ID de Pixcell invalide." });
+        } else if (error instanceof Error) {
             res.status(400).json({ error: error.message });
         } else {
             res.status(500).json({ error: "Une erreur inconnue s'est produite." });
@@ -84,22 +94,26 @@ const deletePixcellController = async (req: Request & { user?: string }, res: Re
 const updatePixcellController = async (req: Request & { user?: string }, res: Response) => {
     try {
         const { id } = req.params;
-        const { pixcell } = req.body;
-        if (!pixcell || !Array.isArray(pixcell)) {
-            return res.status(400).json({ error: "Le champ 'pixcell' est requis et doit être un tableau de nombres." });
+        const { data } = req.body;
+        if (!data || !Array.isArray(data) || !data.every(row => Array.isArray(row))) {
+            return res.status(400).json({ error: "Le champ 'data' est requis et doit être une matrice de pixels." });
         }
         const existingPixcell = await getPixcellById(id);
         if (!existingPixcell) {
             return res.status(404).json({ error: "Pixcell non trouvé." });
         }
-        if (existingPixcell.owner !== req.user) {
+        if (existingPixcell.userId !== req.user) {
             return res.status(403).json({ error: "Accès refusé. Vous ne pouvez pas modifier ce Pixcell." });
         }
-        const updatedPixcell = await updatePixcell(id, pixcell);
+        const updatedPixcell = await updatePixcell(id, data);
         res.status(200).json({ pixcell: updatedPixcell });
     } catch (error) {
         console.error(error);
-        if (error instanceof Error) {
+        if (error instanceof mongoose.Error.ValidationError) {
+            res.status(400).json({ error: error.message });
+        } else if (error instanceof mongoose.Error.CastError) {
+            res.status(400).json({ error: "ID de Pixcell invalide." });
+        } else if (error instanceof Error) {
             res.status(400).json({ error: error.message });
         } else {
             res.status(500).json({ error: "Une erreur inconnue s'est produite." });
