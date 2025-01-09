@@ -1,12 +1,14 @@
+// tsconfig.json
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "ES6",
     "module": "commonjs",
     "outDir": "./dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src", "tests"],
+  "exclude": ["node_modules", "dist"]
 }

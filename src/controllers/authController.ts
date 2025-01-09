@@ -30,6 +30,9 @@ const signin = async (req: Request, res: Response) => {
             if (error.message === "Utilisateur non trouvé") {
                 return res.status(404).json({ error: "Utilisateur non trouvé" });
             }
+            if (error.message === "Identifiants invalides") {
+                return res.status(401).json({ error: "Identifiants invalides" });
+            }
             res.status(400).json({ error: error.message });
         } else {
             res.status(400).json({ error: "Une erreur inconnue s'est produite" });

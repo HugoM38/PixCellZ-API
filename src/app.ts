@@ -1,4 +1,3 @@
-// src/app.ts
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -6,6 +5,7 @@ import authRoutes from "./routes/authRoutes";
 import pixcellRoutes from "./routes/pixcellRoutes"; // Import des routes Pixcell
 import dotenv from "dotenv";
 import cors from "cors";
+import errorHandler from "./middlewares/errorHandler";
 
 dotenv.config();
 
@@ -18,13 +18,23 @@ app.use(bodyParser.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/pixcells", pixcellRoutes);
 
+const dbURI = process.env.NODE_ENV === 'test'
+    ? process.env.MONGODB_TEST_URI
+    : process.env.MONGODB_URI;
+
 mongoose
-    .connect(process.env.MONGODB_URI as string)
-    .then(() => console.log("MongoDB connected"))
+    .connect(dbURI as string)
+    .then(() => {
+        if (process.env.NODE_ENV !== 'test') {
+            app.listen(PORT, () => {
+                console.log(`Server running on port ${PORT}`);
+            });
+        } else {
+            console.log("Connected to Test MongoDB");
+        }
+    })
     .catch((err) => console.log(err));
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.use(errorHandler);
 
-export default app;
+export {app, PORT};
