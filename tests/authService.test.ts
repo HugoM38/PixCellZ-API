@@ -15,7 +15,6 @@ describe('Auth Services', () => {
             password: '$2y$10$fHT9wOeac8Dg9BcXPY7d4O5wvWMN0bT4dDoAEz8C6nxdUZwaQ96.e',
         });
         await user.save();
-        console.log("USER CREATED")
     });
 
     afterEach(async () => {

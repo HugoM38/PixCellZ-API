@@ -17,6 +17,6 @@ const PixcellSchema: Schema = new Schema({
     userId: { type: String, required: true },
     creationDate: { type: Number, required: true },
     data: { type: [[PixelSchema]], required: true }
-});
+}, );
 
 export default mongoose.model<IPixcell>("Pixcell", PixcellSchema);

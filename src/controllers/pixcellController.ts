@@ -5,11 +5,10 @@ import {
     getPixcellsByOwner,
     getPixcellById,
     deletePixcell,
-    getAllPixcells,
-    updatePixcell
+    updatePixcell,
+    getAllPixcells
 } from "../services/pixcellService";
 import mongoose from "mongoose";
-
 
 const createPixcellController = async (req: Request & { user?: string }, res: Response) => {
     try {
@@ -67,30 +66,6 @@ const getPixcellController = async (req: Request & { user?: string }, res: Respo
     }
 };
 
-const deletePixcellController = async (req: Request & { user?: string }, res: Response) => {
-    try {
-        const { id } = req.params;
-        const pixcell = await getPixcellById(id);
-        if (!pixcell) {
-            return res.status(404).json({ error: "Pixcell non trouvé." });
-        }
-        if (pixcell.userId !== req.user) {
-            return res.status(403).json({ error: "Accès refusé. Vous ne pouvez pas supprimer ce Pixcell." });
-        }
-        const deletedPixcell = await deletePixcell(id);
-        res.status(200).json({ message: "Pixcell supprimé avec succès.", pixcell: deletedPixcell });
-    } catch (error) {
-        console.error(error);
-        if (error instanceof mongoose.Error.CastError) {
-            res.status(400).json({ error: "ID de Pixcell invalide." });
-        } else if (error instanceof Error) {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: "Une erreur inconnue s'est produite." });
-        }
-    }
-};
-
 const updatePixcellController = async (req: Request & { user?: string }, res: Response) => {
     try {
         const { id } = req.params;
@@ -121,6 +96,30 @@ const updatePixcellController = async (req: Request & { user?: string }, res: Re
     }
 };
 
+const deletePixcellController = async (req: Request & { user?: string }, res: Response) => {
+    try {
+        const { id } = req.params;
+        const pixcell = await getPixcellById(id);
+        if (!pixcell) {
+            return res.status(404).json({ error: "Pixcell non trouvé." });
+        }
+        if (pixcell.userId !== req.user) {
+            return res.status(403).json({ error: "Accès refusé. Vous ne pouvez pas supprimer ce Pixcell." });
+        }
+        const deletedPixcell = await deletePixcell(id);
+        res.status(200).json({ message: "Pixcell supprimé avec succès.", pixcell: deletedPixcell });
+    } catch (error) {
+        console.error(error);
+        if (error instanceof mongoose.Error.CastError) {
+            res.status(400).json({ error: "ID de Pixcell invalide." });
+        } else if (error instanceof Error) {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Une erreur inconnue s'est produite." });
+        }
+    }
+};
+
 const getAllPixcellsController = async (req: Request & { user?: string }, res: Response) => {
     try {
         const pixcells = await getAllPixcells();
@@ -139,7 +138,7 @@ export {
     createPixcellController,
     getPixcellsController,
     getPixcellController,
-    deletePixcellController,
     updatePixcellController,
+    deletePixcellController,
     getAllPixcellsController
 };
