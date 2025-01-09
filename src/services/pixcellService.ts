@@ -21,4 +21,8 @@ const getAllPixcells = async () => {
     return Pixcell.find();
 };
 
-export { createPixcell, getPixcellsByOwner, getPixcellById, deletePixcell, getAllPixcells };
+const updatePixcell = async (id: string, pixcell: number[]) => {
+    return Pixcell.findByIdAndUpdate(id, {pixcell}, {new: true});
+};
+
+export { createPixcell, getPixcellsByOwner, getPixcellById, deletePixcell, getAllPixcells, updatePixcell };

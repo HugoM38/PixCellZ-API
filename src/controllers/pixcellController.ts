@@ -4,9 +4,9 @@ import {
     getPixcellsByOwner,
     getPixcellById,
     deletePixcell,
-    getAllPixcells
+    getAllPixcells,
+    updatePixcell
 } from "../services/pixcellService";
-
 const createPixcellController = async (req: Request & { user?: string }, res: Response) => {
     try {
         const { pixcell } = req.body;
@@ -41,7 +41,7 @@ const getPixcellsController = async (req: Request & { user?: string }, res: Resp
     }
 };
 
-const getPixcellController = async (req: Request & { user?: string }, res: Response) => {
+const getPixcellController = async (req:Request & { user?: string }, res: Response) => {
     try {
         const { id } = req.params;
         const pixcell = await getPixcellById(id);
@@ -81,6 +81,32 @@ const deletePixcellController = async (req: Request & { user?: string }, res: Re
     }
 };
 
+const updatePixcellController = async (req: Request & { user?: string }, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { pixcell } = req.body;
+        if (!pixcell || !Array.isArray(pixcell)) {
+            return res.status(400).json({ error: "Le champ 'pixcell' est requis et doit être un tableau de nombres." });
+        }
+        const existingPixcell = await getPixcellById(id);
+        if (!existingPixcell) {
+            return res.status(404).json({ error: "Pixcell non trouvé." });
+        }
+        if (existingPixcell.owner !== req.user) {
+            return res.status(403).json({ error: "Accès refusé. Vous ne pouvez pas modifier ce Pixcell." });
+        }
+        const updatedPixcell = await updatePixcell(id, pixcell);
+        res.status(200).json({ pixcell: updatedPixcell });
+    } catch (error) {
+        console.error(error);
+        if (error instanceof Error) {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: "Une erreur inconnue s'est produite." });
+        }
+    }
+};
+
 const getAllPixcellsController = async (req: Request & { user?: string }, res: Response) => {
     try {
         const pixcells = await getAllPixcells();
@@ -100,5 +126,6 @@ export {
     getPixcellsController,
     getPixcellController,
     deletePixcellController,
+    updatePixcellController,
     getAllPixcellsController
 };
