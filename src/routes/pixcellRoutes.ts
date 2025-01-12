@@ -1,11 +1,11 @@
 import { Router } from "express";
 import {
-    createPixcellController,
-    getPixcellsController,
-    getPixcellController,
-    deletePixcellController,
-    updatePixcellController,
-    getAllPixcellsController
+  createPixcellController,
+  getPixcellsController,
+  getPixcellController,
+  deletePixcellController,
+  updatePixcellController,
+  getAllPixcellsController
 } from "../controllers/pixcellController";
 import authMiddleware from "../middlewares/authMiddleware";
 import { createPixcellSchema } from "../schemas/pixcell/createPixcellSchema";
