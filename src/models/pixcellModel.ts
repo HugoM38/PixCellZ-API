@@ -1,4 +1,3 @@
-// src/models/pixcellModel.ts
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPixcell extends Document {

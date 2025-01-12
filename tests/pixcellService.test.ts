@@ -1,4 +1,3 @@
-// tests/pixcell.test.ts
 import request from 'supertest';
 import { app } from '../src/app';
 import User, { IUser } from '../src/models/userModel';
@@ -211,7 +210,6 @@ describe('Pixcell API Endpoints', () => {
         });
 
         it('should return 403 when updating Pixcell of another user', async () => {
-            // Créer un autre utilisateur
             const otherUser = await User.create({
                 username: 'otheruser',
                 email: 'other@example.com',

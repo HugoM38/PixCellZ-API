@@ -1,4 +1,3 @@
-// src/controllers/pixcellController.ts
 import { Request, Response } from "express";
 import {
     createPixcell,

@@ -17,7 +17,7 @@ describe('User API Endpoints', () => {
         user = await User.create({
             username: 'testuser',
             email: 'test@example.com',
-            password: '$2y$10$fHT9wOeac8Dg9BcXPY7d4O5wvWMN0bT4dDoAEz8C6nxdUZwaQ96.e', // Mot de passe hashé
+            password: '$2y$10$fHT9wOeac8Dg9BcXPY7d4O5wvWMN0bT4dDoAEz8C6nxdUZwaQ96.e',
         }) as IUser;
         await user.save();
 
