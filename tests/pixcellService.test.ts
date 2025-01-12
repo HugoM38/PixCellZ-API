@@ -306,7 +306,6 @@ describe('Pixcell API Endpoints', () => {
 
     describe('GET /api/pixcells/all', () => {
         it('should get all Pixcells', async () => {
-            // Créer quelques Pixcells
             await Pixcell.create({
                 userId,
                 creationDate: Date.now(),

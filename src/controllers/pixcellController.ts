@@ -55,7 +55,6 @@ const getPixcellController = async (req: Request & { user?: string }, res: Respo
         }
         res.status(200).json({ pixcell });
     } catch (error) {
-        console.error(error);
         if (error instanceof mongoose.Error.CastError) {
             res.status(400).json({ error: "ID de Pixcell invalide." });
         } else if (error instanceof Error) {
