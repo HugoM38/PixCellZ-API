@@ -134,7 +134,7 @@ const deletePixcellController = async (req: Request & { user?: string }, res: Re
 
 const getAllPixcellsController = async (req: Request & { user?: string }, res: Response) => {
   try {
-    const pixcells = await getAllPixcells();  // <-- Pas de filtre
+    const pixcells = await getAllPixcells();
     return res.status(200).json({ pixcells });
   } catch (error) {
     console.error(error);
